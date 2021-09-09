@@ -426,6 +426,13 @@ public class WorkloadGenerator implements AutoCloseable {
                     dec.format(microsToMillis(stats.publishLatency.getValueAtPercentile(99.9))),
                     throughputFormat.format(microsToMillis(stats.publishLatency.getMaxValue())));
 
+            log.info("E2E Latency (ms) avg: {} - 50%: {} - 99%: {} - 99.9%: {} - Max: {}",
+                    dec.format(microsToMillis(stats.endToEndLatency.getMean())),
+                    dec.format(microsToMillis(stats.endToEndLatency.getValueAtPercentile(50))),
+                    dec.format(microsToMillis(stats.endToEndLatency.getValueAtPercentile(99))),
+                    dec.format(microsToMillis(stats.endToEndLatency.getValueAtPercentile(99.9))),
+                    throughputFormat.format(microsToMillis(stats.endToEndLatency.getMaxValue())));
+
             result.publishRate.add(publishRate);
             result.consumeRate.add(consumeRate);
             result.backlog.add(currentBacklog);
@@ -449,6 +456,7 @@ public class WorkloadGenerator implements AutoCloseable {
 
             if (now >= testEndTime && !needToWaitForBacklogDraining) {
                 CumulativeLatencies agg = worker.getCumulativeLatencies();
+
                 log.info(
                         "----- Aggregated Pub Latency (ms) avg: {} - 50%: {} - 95%: {} - 99%: {} - 99.9%: {} - 99.99%: {} - Max: {}",
                         dec.format(agg.publishLatency.getMean() / 1000.0),
@@ -458,6 +466,16 @@ public class WorkloadGenerator implements AutoCloseable {
                         dec.format(agg.publishLatency.getValueAtPercentile(99.9) / 1000.0),
                         dec.format(agg.publishLatency.getValueAtPercentile(99.99) / 1000.0),
                         throughputFormat.format(agg.publishLatency.getMaxValue() / 1000.0));
+
+                log.info(
+                        "----- Aggregated E2E Latency (ms) avg: {} - 50%: {} - 95%: {} - 99%: {} - 99.9%: {} - 99.99%: {} - Max: {}",
+                        dec.format(agg.endToEndLatency.getMean() / 1000.0),
+                        dec.format(agg.endToEndLatency.getValueAtPercentile(50) / 1000.0),
+                        dec.format(agg.endToEndLatency.getValueAtPercentile(95) / 1000.0),
+                        dec.format(agg.endToEndLatency.getValueAtPercentile(99) / 1000.0),
+                        dec.format(agg.endToEndLatency.getValueAtPercentile(99.9) / 1000.0),
+                        dec.format(agg.endToEndLatency.getValueAtPercentile(99.99) / 1000.0),
+                        throughputFormat.format(agg.endToEndLatency.getMaxValue() / 1000.0));
 
                 result.aggregatedPublishLatencyAvg = agg.publishLatency.getMean() / 1000.0;
                 result.aggregatedPublishLatency50pct = agg.publishLatency.getValueAtPercentile(50) / 1000.0;
