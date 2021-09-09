@@ -17,12 +17,14 @@
 # under the License.
 #
 
-FROM openjdk:8-jdk
+FROM azul/zulu-openjdk:11.0.12
+
+RUN apt-get update \
+    && apt-get install -y curl \
+    && apt-get clean
 
 ARG BENCHMARK_TARBALL
-
 ADD ${BENCHMARK_TARBALL} /
-
 RUN mv openmessaging-benchmark-* /benchmark
 
 WORKDIR /benchmark
