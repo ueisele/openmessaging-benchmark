@@ -250,6 +250,8 @@ resource "aws_vpc_dhcp_options_association" "this" {
 # Security (ACL)                #
 #################################
 
+### Default ACL
+
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_network_acl
 resource "aws_default_network_acl" "default" {
   default_network_acl_id = aws_vpc.main.default_network_acl_id
@@ -691,4 +693,178 @@ resource "aws_network_acl_rule" "private_egress_ipv6_vpc" {
   ipv6_cidr_block = aws_vpc.main.ipv6_cidr_block
   from_port       = 0
   to_port         = 0
+}
+
+#################################
+# Security (SG)                 #
+#################################
+
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  egress = [
+    {
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+      from_port   = 80
+      to_port     = 80
+      description = "HTTP"
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    },
+    {
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+      from_port   = 443
+      to_port     = 443
+      description = "HTTPS"
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    }
+  ]
+
+  tags = {
+    Name = "${var.environment}-default"
+    Environment = var.environment
+    Terraform = "true"
+  }
+}
+
+resource "aws_security_group" "public" {
+  vpc_id = aws_vpc.main.id
+
+  ingress = [
+    {
+      protocol    = -1
+      cidr_blocks = [aws_vpc.main.cidr_block]
+      ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
+      from_port   = 0
+      to_port     = 0
+      description = null
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    }
+  ]
+
+  egress = [
+    {
+      protocol    = -1
+      cidr_blocks = [aws_vpc.main.cidr_block]
+      ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
+      from_port   = 0
+      to_port     = 0
+      description = null
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    }
+  ]
+
+  tags = {
+    Name = "${var.environment}-public"
+    Environment = var.environment
+    Terraform = "true"
+  }
+}
+
+resource "aws_security_group" "private" {
+  vpc_id = aws_vpc.main.id
+
+  ingress = [
+    {
+      protocol = -1
+      cidr_blocks = [aws_vpc.main.cidr_block]
+      ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
+      from_port = 0
+      to_port = 0
+      description = null
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    }
+  ]
+
+  egress = [
+    {
+      protocol = -1
+      cidr_blocks = aws_subnet.private.*.cidr_block
+      ipv6_cidr_blocks = aws_subnet.private.*.ipv6_cidr_block
+      from_port = 0
+      to_port = 0
+      description = null
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    }
+  ]
+
+  tags = {
+    Name = "${var.environment}-private"
+    Environment = var.environment
+    Terraform = "true"
+  }
+}
+
+resource "aws_security_group" "web" {
+  vpc_id = aws_vpc.main.id
+
+  ingress = [
+    {
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+      from_port   = 80
+      to_port     = 80
+      description = "HTTP"
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    },
+    {
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+      from_port   = 443
+      to_port     = 443
+      description = "HTTPS"
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    }
+  ]
+
+  tags = {
+    Name = "${var.environment}-web"
+    Environment = var.environment
+    Terraform = "true"
+  }
+}
+
+resource "aws_security_group" "ssh" {
+  vpc_id = aws_vpc.main.id
+
+  ingress = [
+    {
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+      from_port   = 22
+      to_port     = 22
+      description = "SSH"
+      prefix_list_ids = null
+      security_groups = null
+      self = false
+    }
+  ]
+
+  tags = {
+    Name = "${var.environment}-ssh"
+    Environment = var.environment
+    Terraform = "true"
+  }
 }
