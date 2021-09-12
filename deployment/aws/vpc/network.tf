@@ -223,6 +223,21 @@ resource "aws_route53_record" "public-ns" {
   records = aws_route53_zone.public.name_servers
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_zone
+# https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zone-private-considerations.html
+resource "aws_route53_zone" "private" {
+  name = "${var.environment}.${var.route53_public_main_zone}"
+
+  vpc {
+    vpc_id = aws_vpc.main.id
+  }
+
+  tags = {
+    Environment = var.environment
+    Terraform = "true"
+  }
+}
+
 #################################
 # DHCP                          #
 #################################
