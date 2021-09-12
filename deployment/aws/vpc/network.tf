@@ -725,6 +725,8 @@ resource "aws_default_security_group" "default" {
 }
 
 resource "aws_security_group" "public" {
+  name = "${var.environment}-public"
+
   vpc_id = aws_vpc.main.id
 
   ingress = [
@@ -764,6 +766,8 @@ resource "aws_security_group" "public" {
 }
 
 resource "aws_security_group" "private" {
+  name = "${var.environment}-private"
+
   vpc_id = aws_vpc.main.id
 
   ingress = [
@@ -803,6 +807,8 @@ resource "aws_security_group" "private" {
 }
 
 resource "aws_security_group" "web" {
+  name = "${var.environment}-web"
+
   vpc_id = aws_vpc.main.id
 
   ingress = [
