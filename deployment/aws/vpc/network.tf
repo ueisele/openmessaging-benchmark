@@ -402,7 +402,7 @@ resource "aws_network_acl_rule" "public_ingress_ipv6_vpc" {
 
   network_acl_id  = aws_network_acl.public[0].id
   egress          = false
-  rule_number     = 300
+  rule_number     = 310
   protocol        = -1
   rule_action     = "allow"
   ipv6_cidr_block = aws_vpc.main.ipv6_cidr_block
@@ -516,7 +516,7 @@ resource "aws_network_acl_rule" "public_egress_ipv6_vpc" {
 
   network_acl_id  = aws_network_acl.public[0].id
   egress          = true
-  rule_number     = 300
+  rule_number     = 310
   protocol        = -1
   rule_action     = "allow"
   ipv6_cidr_block = aws_vpc.main.ipv6_cidr_block
@@ -590,7 +590,7 @@ resource "aws_network_acl_rule" "private_ingress_ipv6_vpc" {
 
   network_acl_id  = aws_network_acl.private[0].id
   egress          = false
-  rule_number     = 300
+  rule_number     = 310
   protocol        = -1
   rule_action     = "allow"
   ipv6_cidr_block = aws_vpc.main.ipv6_cidr_block
@@ -676,7 +676,7 @@ resource "aws_network_acl_rule" "private_egress_ipv6_vpc" {
 
   network_acl_id  = aws_network_acl.private[0].id
   egress          = true
-  rule_number     = 300
+  rule_number     = 310
   protocol        = -1
   rule_action     = "allow"
   ipv6_cidr_block = aws_vpc.main.ipv6_cidr_block
