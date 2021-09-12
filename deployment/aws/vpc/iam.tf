@@ -39,7 +39,7 @@ resource "aws_iam_role" "instance-default" {
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
 resource "aws_iam_role_policy_attachment" "instance-default-role-AmazonSSMManagedInstanceCore" {
   role       = aws_iam_role.instance-default.name
-  policy_arn = data.aws_iam_policy.CloudWatchAgentServerPolicy.arn
+  policy_arn = data.aws_iam_policy.AmazonSSMManagedInstanceCore.arn
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy
