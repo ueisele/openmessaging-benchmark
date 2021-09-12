@@ -1,5 +1,17 @@
 = VPC
 
+== Quick Start
+
+[source,bash]
+----
+terraform init -backend-config="profile=tu-dev-ueisele"
+----
+
+[source,bash]
+----
+terraform plan --var "profile=tu-dev-ueisele"
+----
+
 == Connect to Instances
 
 This VPC requires AWS Systems Manager Session Manager to connect to the Amazon EC2 instances.

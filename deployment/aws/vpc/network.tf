@@ -32,6 +32,7 @@ resource "aws_subnet" "public" {
   tags = {
     Name = "${var.environment}-public-${count.index}"
     Environment = var.environment
+    Tier = "public"
     Terraform = "true"
   }
 }
@@ -72,6 +73,7 @@ resource "aws_subnet" "private" {
   tags = {
     Name = "${var.environment}-private-${count.index}"
     Environment = var.environment
+    Tier = "private"
     Terraform = "true"
   }
 }
@@ -297,40 +299,12 @@ resource "aws_network_acl" "public" {
 ## Public ACL Ingress Rules
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule
-resource "aws_network_acl_rule" "public_ingress_ipv4_ssh" {
-  count = length(aws_network_acl.public.*) > 0 ? 1 : 0
-
-  network_acl_id = aws_network_acl.public[0].id
-  egress         = false
-  rule_number    = 100
-  protocol       = "tcp"
-  rule_action    = "allow"
-  cidr_block     = "0.0.0.0/0"
-  from_port      = 22
-  to_port        = 22
-}
-
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule
-resource "aws_network_acl_rule" "public_ingress_ipv6_ssh" {
-  count = length(aws_network_acl.public.*) > 0 ? 1 : 0
-
-  network_acl_id  = aws_network_acl.public[0].id
-  egress          = false
-  rule_number     = 110
-  protocol        = "tcp"
-  rule_action     = "allow"
-  ipv6_cidr_block = "::/0"
-  from_port       = 22
-  to_port         = 22
-}
-
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/network_acl_rule
 resource "aws_network_acl_rule" "public_ingress_ipv4_http" {
   count = length(aws_network_acl.public.*) > 0 ? 1 : 0
 
   network_acl_id = aws_network_acl.public[0].id
   egress         = false
-  rule_number    = 120
+  rule_number    = 100
   protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
@@ -344,7 +318,7 @@ resource "aws_network_acl_rule" "public_ingress_ipv6_http" {
 
   network_acl_id  = aws_network_acl.public[0].id
   egress          = false
-  rule_number     = 130
+  rule_number     = 110
   protocol        = "tcp"
   rule_action     = "allow"
   ipv6_cidr_block = "::/0"
@@ -358,7 +332,7 @@ resource "aws_network_acl_rule" "public_ingress_ipv4_https" {
 
   network_acl_id = aws_network_acl.public[0].id
   egress         = false
-  rule_number    = 140
+  rule_number    = 120
   protocol       = "tcp"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
@@ -372,7 +346,7 @@ resource "aws_network_acl_rule" "public_ingress_ipv6_https" {
 
   network_acl_id  = aws_network_acl.public[0].id
   egress          = false
-  rule_number     = 150
+  rule_number     = 130
   protocol        = "tcp"
   rule_action     = "allow"
   ipv6_cidr_block = "::/0"
@@ -745,6 +719,7 @@ resource "aws_default_security_group" "default" {
   tags = {
     Name = "${var.environment}-default"
     Environment = var.environment
+    Tier = "default"
     Terraform = "true"
   }
 }
@@ -783,6 +758,7 @@ resource "aws_security_group" "public" {
   tags = {
     Name = "${var.environment}-public"
     Environment = var.environment
+    Tier = "public"
     Terraform = "true"
   }
 }
@@ -821,6 +797,7 @@ resource "aws_security_group" "private" {
   tags = {
     Name = "${var.environment}-private"
     Environment = var.environment
+    Tier = "private"
     Terraform = "true"
   }
 }
@@ -856,30 +833,7 @@ resource "aws_security_group" "web" {
   tags = {
     Name = "${var.environment}-web"
     Environment = var.environment
-    Terraform = "true"
-  }
-}
-
-resource "aws_security_group" "ssh" {
-  vpc_id = aws_vpc.main.id
-
-  ingress = [
-    {
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-      ipv6_cidr_blocks = ["::/0"]
-      from_port   = 22
-      to_port     = 22
-      description = "SSH"
-      prefix_list_ids = null
-      security_groups = null
-      self = false
-    }
-  ]
-
-  tags = {
-    Name = "${var.environment}-ssh"
-    Environment = var.environment
+    Tier = "web"
     Terraform = "true"
   }
 }
