@@ -26,7 +26,7 @@ resource "aws_iam_role" "instance-default" {
         Principal = {
           Service = "ec2.amazonaws.com"
         }
-      },
+      }
     ]
   })
 

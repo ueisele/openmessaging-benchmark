@@ -246,7 +246,7 @@ resource "aws_route53_zone" "private" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_dhcp_options
 resource "aws_vpc_dhcp_options" "main" {
-  domain_name          = "${var.environment}.${var.route53_public_main_zone}"
+  domain_name          = aws_route53_zone.private.name
   domain_name_servers  = ["AmazonProvidedDNS"]
   ntp_servers          = ["169.254.169.123"]
 

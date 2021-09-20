@@ -5,12 +5,27 @@ resource "aws_instance" "main" {
   subnet_id              = tolist(data.aws_subnet_ids.public.ids)[0]
   vpc_security_group_ids = concat(data.aws_security_groups.public.ids,data.aws_security_groups.web.ids)
   iam_instance_profile   = data.aws_iam_instance_profile.default.name
+  user_data              = data.template_cloudinit_config.config.rendered
 
   tags = {
     Name = "${var.environment}-${var.module}"
     Environment = var.environment
     Module = var.module
     Terraform = "true"
+  }
+}
+
+data "template_cloudinit_config" "config" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    content_type = "text/cloud-config"
+    content      = <<-EOF
+    #cloud-config
+    hostname: ${var.module}
+    fqdn: ${var.module}.${data.aws_route53_zone.private.name}
+    EOF
   }
 }
 
