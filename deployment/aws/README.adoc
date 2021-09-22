@@ -1,0 +1,11 @@
+= Provisioning
+
+== Ideas
+
+ASH auto refresh after AMI build:
+
+* https://aws.amazon.com/de/blogs/compute/introducing-instance-refresh-for-ec2-auto-scaling/
+
+Attach EBS volume after instance start:
+
+* https://docs.aws.amazon.com/autoscaling/ec2/userguide/tutorial-lifecycle-hook-lambda.html
